@@ -23,7 +23,7 @@ UPDATE_PACKAGE() {
 
 	# 3. 处理特殊的包结构
 	if [[ "$PKG_SPECIAL" == "pkg" ]]; then
-		# 修复点：添加 -not -path "./$REPO_NAME/" 避免 cp 自己到自己导致 exit 1
+		# 【关键修复】：使用 -not -path 排除仓库根目录本身，避免 cp 报错
 		find "./$REPO_NAME/" -maxdepth 3 -type d -iname "*$PKG_NAME*" -not -path "./$REPO_NAME/" -prune -exec cp -rf {} ./ \;
 		rm -rf "./$REPO_NAME/"
 	elif [[ "$PKG_SPECIAL" == "name" ]]; then
@@ -31,10 +31,10 @@ UPDATE_PACKAGE() {
 	fi
 }
 
-# [修改点] 统一插件名称与 Handles.sh 对应，并修复 OpenClash 的调用
+# [修改点] 统一插件名称。
+# 如果你只需要仓库里的特定子文件夹，请保留 "pkg"；如果只需要整个仓库，可以去掉 "pkg"。
 UPDATE_PACKAGE "argon" "jerrykuku/luci-theme-argon" "master"
-# 注意：OpenClash 仓库里本身就包含同名文件夹，直接克隆即可，若需提取则使用修正后的 pkg 逻辑
-UPDATE_PACKAGE "OpenClash" "vernesong/OpenClash" "master" 
+UPDATE_PACKAGE "OpenClash" "vernesong/OpenClash" "master" "pkg"
 UPDATE_PACKAGE "diskman" "lisaac/luci-app-diskman" "master"
 
 # 自动版本更新逻辑
