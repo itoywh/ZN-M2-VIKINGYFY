@@ -8,6 +8,7 @@ UPDATE_PACKAGE() {
 	local PKG_LIST=("$PKG_NAME" $5)
 	local REPO_NAME=${PKG_REPO#*/}
 
+	# 1. 清理旧的插件目录，防止重复
 	for NAME in "${PKG_LIST[@]}"; do
 		[ -z "$NAME" ] && continue
 		local FOUND_DIRS=$(find ../feeds/luci/ ../feeds/packages/ -maxdepth 3 -type d -iname "*$NAME*" 2>/dev/null)
@@ -16,20 +17,24 @@ UPDATE_PACKAGE() {
 		fi
 	done
 
+	# 2. 克隆新仓库
 	git clone --depth=1 --single-branch --branch "$PKG_BRANCH" "https://github.com/$PKG_REPO.git"
 	if [ $? -ne 0 ]; then return 1; fi
 
+	# 3. 处理特殊的包结构
 	if [[ "$PKG_SPECIAL" == "pkg" ]]; then
-		find "./$REPO_NAME/" -maxdepth 3 -type d -iname "*$PKG_NAME*" -prune -exec cp -rf {} ./ \;
+		# 修复点：添加 -not -path "./$REPO_NAME/" 避免 cp 自己到自己导致 exit 1
+		find "./$REPO_NAME/" -maxdepth 3 -type d -iname "*$PKG_NAME*" -not -path "./$REPO_NAME/" -prune -exec cp -rf {} ./ \;
 		rm -rf "./$REPO_NAME/"
 	elif [[ "$PKG_SPECIAL" == "name" ]]; then
 		mv -f "$REPO_NAME" "$PKG_NAME"
 	fi
 }
 
-# [修改点] 使用 jerrykuku 的官方原版 Argon 主题
+# [修改点] 统一插件名称与 Handles.sh 对应，并修复 OpenClash 的调用
 UPDATE_PACKAGE "argon" "jerrykuku/luci-theme-argon" "master"
-UPDATE_PACKAGE "openclash" "vernesong/OpenClash" "master" "pkg"
+# 注意：OpenClash 仓库里本身就包含同名文件夹，直接克隆即可，若需提取则使用修正后的 pkg 逻辑
+UPDATE_PACKAGE "OpenClash" "vernesong/OpenClash" "master" 
 UPDATE_PACKAGE "diskman" "lisaac/luci-app-diskman" "master"
 
 # 自动版本更新逻辑
