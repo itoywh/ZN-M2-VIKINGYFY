@@ -35,7 +35,7 @@ jobs:
     with:
       WRT_CONFIG: ${{ matrix.CONFIG }}
       WRT_THEME: argon
-      WRT_NAME: OpenWRT-Wired
+      WRT_NAME: OpenWRT
       WRT_IP: 192.168.1.1
       WRT_PW: none
       WRT_SOURCE: ${{ matrix.SOURCE }}
