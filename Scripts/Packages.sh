@@ -62,4 +62,4 @@ UPDATE_VERSION() {
 }
 
 # 需要自动更新版本的插件
-UPDATE_VERSION "sing-box"
+# UPDATE_VERSION "sing-box"
