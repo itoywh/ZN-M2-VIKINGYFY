@@ -39,8 +39,11 @@ UPDATE_PACKAGE() {
 
 # --- 插件更新列表 ---
 UPDATE_PACKAGE "argon" "jerrykuku/luci-theme-argon" "master"
-UPDATE_PACKAGE "OpenClash" "vernesong/OpenClash" "master" "pkg"
+# UPDATE_PACKAGE "OpenClash" "vernesong/OpenClash" "master" "pkg"
 UPDATE_PACKAGE "diskman" "lisaac/luci-app-diskman" "master"
+UPDATE_PACKAGE "ssr-plus" "fw876/helloworld" "main"
+# UPDATE_PACKAGE "MosDNS" "sbwml/luci-app-mosdns" "v5"
+
 
 # 自动版本更新逻辑
 UPDATE_VERSION() {
